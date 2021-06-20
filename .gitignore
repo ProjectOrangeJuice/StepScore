@@ -1,2 +1,4 @@
 db/script/db.sqlite
 db/script/db.sqlite-journal
+api/db/script/db.sqlite-journal
+api/db/script/db.sqlite
