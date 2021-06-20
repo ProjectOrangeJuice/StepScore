@@ -1,0 +1,112 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<h1>Set your userid</h1>
+<input type="text" placeholder="userid" id="userid">
+<button onclick="login()">OK</button>>
+
+<hr>
+
+<h1>Create a new board</h1>
+<input type="text" placeholder="abc" id="createCode">
+<button onclick="createBoard()">OK</button>
+
+<hr>
+
+<h1>Join a board</h1>
+<input type="text" placeholder="abc" id="joinCode">
+<button onclick="joinBoard()">OK</button>>
+
+<hr>
+
+<div id="boards"></div>
+
+
+<script>
+
+    var api = "/api"
+
+    function login() {
+        let userID = document.getElementById("userid").value;
+        document.cookie = "userid=" + userID;
+        location.reload();
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+
+    function createBoard() {
+        let userID = getCookie("userid")
+        let board = document.getElementById("createCode").value;
+        $.ajax({
+            type: "POST",
+            url: api + "/board/" + board,
+        }).done(function () {
+            location.reload();
+        })
+            .fail(function (data) {
+                alert("error -> " + data);
+            })
+
+    }
+
+    function joinBoard() {
+        let userID = getCookie("userid")
+        let board = document.getElementById("joinCode").value;
+        $.ajax({
+            type: "PUT",
+            url: api + "/board/" + board,
+        }).done(function () {
+            location.reload();
+        })
+            .fail(function (data) {
+                alert("error -> " + data);
+            })
+
+    }
+
+    function loadBoard() {
+        let userID = getCookie("userid")
+        $.ajax({
+            type: "GET",
+            url: api + "/boards",
+            beforeSend: function (request) {
+                request.setRequestHeader("userid", userID);
+            },
+        }).done(function (data) {
+
+            const obj = JSON.parse(data);
+
+            obj.array.forEach(element => {
+                let item = document.createElement("li");
+                let ahref = document.createElement("a");
+                ahref.href = "/board?board=" + element;
+
+                let node = document.createTextNode(element);
+                ahref.appendChild(node);
+                item.appendChild(ahref);
+
+
+            });
+
+
+        })
+            .fail(function (data) {
+                alert("error -> " + data);
+            })
+    }
+
+</script>

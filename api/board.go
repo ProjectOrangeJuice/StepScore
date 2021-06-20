@@ -38,6 +38,15 @@ func leaveBoard(w http.ResponseWriter, r *http.Request) {
 }
 
 func createBoard(w http.ResponseWriter, r *http.Request) {
+	// Get the userID
+	user := r.Header.Get("userid")
+	userID, err := strconv.Atoi(user)
+	if err != nil {
+		http.Error(w, "The userID was unreadable", http.StatusInternalServerError)
+		logging.Log("joinBoard", fmt.Sprintf("Userid[%v] could not be converted", user), err)
+		return
+	}
+
 	params := mux.Vars(r)
 	codeStr := params["code"]
 	if codeStr == "" {
@@ -54,6 +63,7 @@ func createBoard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	db.InsertBoard(codeStr, string(body))
+	db.JoinBoard(userID, codeStr)
 }
 
 func getBoard(w http.ResponseWriter, r *http.Request) {

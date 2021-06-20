@@ -30,7 +30,7 @@ func GetBoard(code string, date string) []data.BoardResult {
 }
 
 func GetBoards(userID int) []string {
-	stmt, err := dbConn.Prepare(`SELECT * FROM 'userBoards' WHERE userID=?`)
+	stmt, err := dbConn.Prepare(`SELECT boardID FROM 'userBoards' WHERE userID=?`)
 	if err != nil {
 		logging.Log("GetBoards", "sql script error", err)
 	}

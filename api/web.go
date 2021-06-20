@@ -15,12 +15,12 @@ import (
 
 func main() {
 	router := mux.NewRouter()
-
-	router.HandleFunc("/steps/{day}/{month}/{year}", stepsHandler).Methods("POST")
-	router.HandleFunc("/board/{code}", boardHandler).Methods("POST", "GET", "DELETE", "PUT")
-	router.HandleFunc("/boards", boardsDisplayHandler).Methods("GET")
+	router.HandleFunc("/api/steps/{day}/{month}/{year}", stepsHandler).Methods("POST", "OPTIONS")
+	router.HandleFunc("/api/board/{code}", boardHandler).Methods("POST", "GET", "DELETE", "PUT", "OPTIONS")
+	router.HandleFunc("/api/boards", boardsDisplayHandler).Methods("GET", "OPTIONS")
 
 	log.Fatal(http.ListenAndServe(":9090", router))
+	//log.Fatal(http.ListenAndServe(":9090", handlers.CompressHandler(cors(router))))
 }
 
 func stepsHandler(w http.ResponseWriter, r *http.Request) {
@@ -72,6 +72,9 @@ func boardHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func boardsDisplayHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		return
+	}
 	// Get the userID
 	user := r.Header.Get("userid")
 	userID, err := strconv.Atoi(user)
