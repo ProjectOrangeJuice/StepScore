@@ -17,10 +17,6 @@ func InsertSteps(userID, steps int, date string) {
 		logging.Log("insertSteps", "sql error", err)
 	}
 
-	// err = stmt.Close()
-	// if err != nil {
-	// 	logging.Log("insertSteps", "sql closing error", err)
-	// }
 }
 
 func InsertBoard(code, description string) {

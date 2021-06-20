@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -58,9 +59,36 @@ func stepsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func boardHandler(w http.ResponseWriter, r *http.Request) {
-
+	switch r.Method {
+	case http.MethodPost:
+		createBoard(w, r)
+	case http.MethodGet:
+		getBoard(w, r)
+	case http.MethodDelete:
+		leaveBoard(w, r)
+	case http.MethodPut:
+		joinBoard(w, r)
+	}
 }
 
 func boardsDisplayHandler(w http.ResponseWriter, r *http.Request) {
+	// Get the userID
+	user := r.Header.Get("userid")
+	userID, err := strconv.Atoi(user)
+	if err != nil {
+		http.Error(w, "The userID was unreadable", http.StatusInternalServerError)
+		logging.Log("boardsDisplayHandler", fmt.Sprintf("Userid[%v] could not be converted", user), err)
+		return
+	}
+
+	codes := db.GetBoards(userID)
+
+	err = json.NewEncoder(w).Encode(codes)
+	if err != nil {
+		err = fmt.Errorf("could not convert to json")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		logging.Log("boardsDisplayHandler", err.Error(), err)
+		return
+	}
 
 }
