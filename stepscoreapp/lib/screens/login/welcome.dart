@@ -38,8 +38,17 @@ class WelcomeScreen extends StatelessWidget {
                       child: Text('Login'),
                       style: ElevatedButton.styleFrom(primary: Colors.orange),
                       onPressed: () {
-                        //   print(nameController.text);
-                        //  print(passwordController.text);
+                        login(usernameController.text).then((reg) {
+                          if (reg) {
+                            print("Logged in!");
+                          } else {
+                            print("Login failed");
+                          }
+                        }).catchError((e) {
+                          showAlertDialog(
+                              context, "Error with login", e.toString());
+                          print(e);
+                        });
                       },
                     ),
                     ElevatedButton(

@@ -17,13 +17,12 @@ func main() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/auth/register", registerHandler)
-	router.HandleFunc("/api/auth/access", accessHandler)
+	router.HandleFunc("/api/auth/login", accessHandler)
 	log.Fatal(http.ListenAndServe(":9091", router))
 }
 
 func accessHandler(w http.ResponseWriter, r *http.Request) {
 	user := r.Header.Get("username")
-
 	id := db.GetUserID(user)
 	if id == -1 {
 		http.Error(w, "user not found", http.StatusUnauthorized)
